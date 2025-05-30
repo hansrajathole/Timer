@@ -1,60 +1,104 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from "react";
 
 function App() {
-  let date = new Date()
-  const [currentTime, setCurrentTime] = useState(date);
-  const [todo, settodo] = useState([])
-  const [taks, settaks] = useState('')
-  const [isEdit, setisEdit] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [todo, setTodo] = useState([]);
+  const [task, setTask] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
+  const [timer, setTimer] = useState({
+    hour: 0,
+    minute: 0,
+    second: 0
+  });
+
   useEffect(() => {
-    setInterval(()=>{
-        setCurrentTime(new Date())
-    },1000)
-    return () => {
-      clearInterval()
-    }
-  }, [])
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const handleSubmit = (e)=>{
+  const handleSubmit = (e) => {
     e.preventDefault();
-    let time = currentTime.toLocaleTimeString()
-    let obj = {
-      time : time,
-      taks : taks
-    }
+    if (!task.trim()) return;
+    
+    const newTodo = {
+      id: Date.now(),
+      time: currentTime.toLocaleTimeString(),
+      task: task,
+    };
 
-    settodo((prev)=> [...prev , obj])
-    settaks('')
+    setTodo((prev) => [...prev, newTodo]);
+    setTask("");
+  };
 
-  }
-  
-  const handleEdit = (taks) =>{
-      settaks(taks)
-      setisEdit(!isEdit)
-  }
-  const handleDelete = (taks)=>{
-    settodo((prev)=>prev.filter((list)=> list.taks !== taks))
-  }
+  const handleDelete = (id) => {
+    setTodo((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    const numValue = Math.max(0, Math.min(parseInt(value) || 0, 
+      id === 'hour' ? 23 : 59));
+
+    setTimer(prev => ({
+      ...prev,
+      [id]: numValue
+    }));
+  };
+
   return (
     <>
-      
-      <p>Current Time: {currentTime.toLocaleTimeString()}</p>
-      <form onSubmit={handleSubmit} >
-        <input type="text" value={taks} onChange={(e)=>settaks(e.target.value)}/>
-        <button>Add</button>
-      </form>
       <div>
-        {
-          todo.map((list , idx)=> <div className='list'>
-            <div>{list.taks}</div>
-            <p disabled={isEdit}>{list.time}</p>
-        
-            <button disabled={isEdit} onClick={()=>handleEdit(list.taks)}>edit</button>
-            <button onClick={()=>handleDelete(list.taks)}>X</button>
-          </div>)
-        }
+        <p>Current Time: {currentTime.toLocaleTimeString()}</p>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={task}
+            onChange={(e) => setTask(e.target.value)}
+            placeholder="Enter a task"
+          />
+          <button type="submit">Add</button>
+        </form>
+        <div>
+          {todo.map((item) => (
+            <div className="list" key={item.id}>
+              <div>{item.task}</div>
+              <p>{item.time}</p>
+              <button onClick={() => handleDelete(item.id)}>X</button>
+            </div>
+          ))}
+        </div>
       </div>
-
+      <div>
+        <h1>Timer</h1>
+        <div className="timer">
+          <input
+            type="number"
+            id="hour"
+            value={timer.hour}
+            onChange={handleChange}
+            min="0"
+            max="23"
+          />
+          <input
+            type="number"
+            id="minute"
+            value={timer.minute}
+            onChange={handleChange}
+            min="0"
+            max="59"
+          />
+          <input
+            type="number"
+            id="second"
+            value={timer.second}
+            onChange={handleChange}
+            min="0"
+            max="59"
+          />
+        </div>
+      </div>
     </>
   );
 }
