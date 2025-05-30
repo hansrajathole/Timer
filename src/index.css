@@ -13,3 +13,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.list {
+  display: flex;
+  justify-content: center;
+  justify-items: center ;
+  align-items: center;
+  gap: 80px;
+}
