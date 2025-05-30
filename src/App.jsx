@@ -5,11 +5,7 @@ function App() {
   const [todo, setTodo] = useState([]);
   const [task, setTask] = useState("");
   const [isEdit, setIsEdit] = useState(false);
-  const [timer, setTimer] = useState({
-    hour: 0,
-    minute: 0,
-    second: 0
-  });
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,16 +32,6 @@ function App() {
     setTodo((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    const numValue = Math.max(0, Math.min(parseInt(value) || 0, 
-      id === 'hour' ? 23 : 59));
-
-    setTimer(prev => ({
-      ...prev,
-      [id]: numValue
-    }));
-  };
 
   return (
     <>
