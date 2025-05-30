@@ -5,6 +5,7 @@ function App() {
   const [currentTime, setCurrentTime] = useState(date);
   const [todo, settodo] = useState([])
   const [taks, settaks] = useState('')
+  const [isEdit, setisEdit] = useState(false)
   useEffect(() => {
     setInterval(()=>{
         setCurrentTime(new Date())
@@ -23,9 +24,17 @@ function App() {
     }
 
     settodo((prev)=> [...prev , obj])
+    settaks('')
 
   }
   
+  const handleEdit = (taks) =>{
+      settaks(taks)
+      setisEdit(!isEdit)
+  }
+  const handleDelete = (taks)=>{
+    settodo((prev)=>prev.filter((list)=> list.taks !== taks))
+  }
   return (
     <>
       
@@ -38,7 +47,10 @@ function App() {
         {
           todo.map((list , idx)=> <div className='list'>
             <div>{list.taks}</div>
-            <p>{list.time}</p>
+            <p disabled={isEdit}>{list.time}</p>
+        
+            <button disabled={isEdit} onClick={()=>handleEdit(list.taks)}>edit</button>
+            <button onClick={()=>handleDelete(list.taks)}>X</button>
           </div>)
         }
       </div>
